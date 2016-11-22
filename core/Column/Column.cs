@@ -13,7 +13,6 @@ namespace SimpleDB.core
         public string columnName { get; private set; }
         public DataType dataType { get; private set; }
         public DataOptions[] dataOptions { get; private set; }
-
         private XElement xElement;
 
         public Column(string columnName, DataType dataType, DataOptions[] dataOptions, XElement element)
@@ -26,6 +25,7 @@ namespace SimpleDB.core
 
         public bool EditName(string newName)
         {
+            if (xElement.Parent == null) return false;
             XElement EntityElement = xElement.Parent;
             if (EntityElement.Elements().Where(el => el.Attribute("Name").Value == newName).Count() >= 1) return false;
 
@@ -51,13 +51,14 @@ namespace SimpleDB.core
             return true;
         }
 
-        public void RemoveColumn()
+        public void Remove()
         {
             xElement.Remove();
         }
 
         public bool MoveDown()
         {
+            if (xElement.Parent == null) return false;
             XElement EntityElement = xElement.Parent;
 
             if (EntityElement.Elements().ToList<XElement>()[0].Attribute("Name").Value == columnName) return false;
@@ -83,6 +84,7 @@ namespace SimpleDB.core
 
         public bool MoveUp()
         {
+            if (xElement.Parent == null) return false;
             XElement EntityElement = xElement.Parent;
 
             XElement elementToMove;

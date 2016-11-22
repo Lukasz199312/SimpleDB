@@ -51,6 +51,18 @@ namespace SimpleDB.core.TableManagement
             return Columns.First(Col => Col.columnName == tableName);
         }
 
+        public bool RemoveColumn(string columnName)
+        {
+            Column column = Columns.First(col => col.columnName == columnName);
+            if (column == null) return false;
+
+            column.Remove();
+            Columns.Remove(column);
+
+            return true;
+
+        }
+
         public string[] getColumnNames()
         {
             return new TableDetails().getColumnesName(xDocument);
