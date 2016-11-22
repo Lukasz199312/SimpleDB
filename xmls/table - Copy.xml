@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Table Name="" id="">
+  <Entity>
+    <Column Name="id" DataType="int" Require="" key="" AutoIncrement=""/>
+    <Column Name="UserName" DataType="string(20)"/>
+    <Column Name="Password" DataType="string(20)"/>
+    <Column Name="isEasy"   DataType="Boolean(true)"/>
+  </Entity>
+  <Head>2</Head>
+  
+  <Field _id="0">
+    <id>0</id>
+    <UserName>Admin</UserName>
+    <Password>dF2$2ds1Xc3</Password>
+    <isEasy>true</isEasy>
+  </Field>
+
+  <Field _id="1">
+    <id>1</id>
+    <UserName>D3ftp</UserName>
+    <Password>xcC32S2!@xz001w</Password>
+    <isEasy>false</isEasy>
+  </Field>
+
+  <Field _id="2">
+    <id>2</id>
+    <UserName>Fletcher</UserName>
+    <Password>xcDf222!24001w</Password>
+    <isEasy>false</isEasy>
+  </Field>
+  
+</Table>
