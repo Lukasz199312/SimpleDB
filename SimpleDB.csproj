@@ -46,6 +46,8 @@
     <Compile Include="core\IO\DatabaseCreator.cs" />
     <Compile Include="core\IO\DatabaseLoader.cs" />
     <Compile Include="core\IO\TableIO.cs" />
+    <Compile Include="core\Line\Line.cs" />
+    <Compile Include="core\Line\Row.cs" />
     <Compile Include="core\SimpleDB.cs" />
     <Compile Include="core\TableManagement\dType.cs" />
     <Compile Include="core\TableManagement\Table.cs" />

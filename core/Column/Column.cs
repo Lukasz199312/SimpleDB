@@ -109,5 +109,26 @@ namespace SimpleDB.core
             return true;
         }
 
+        public void addData(object data)
+        {
+            if (!checkDataType(data)) return;
+
+           // if(dataType == DataType.NUMBER)
+
+        }
+
+        private bool checkDataType(object data)
+        {
+            if(dataType == DataType.NUMBER)
+            {
+                if (dataType.GetType() == typeof(Int32)) return true;
+                return false;
+            }
+
+            if (dataType.GetType() == typeof(string)) return true;
+
+            return false;
+        }
+
     }
 }

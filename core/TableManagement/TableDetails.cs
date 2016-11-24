@@ -54,6 +54,12 @@ namespace SimpleDB.core.TableManagement
             return xTable.Root.Element("Entity").Elements();
         }
 
+        public IEnumerable<XElement> getXmlLines(XDocument xTable)
+        {
+            if (xTable.Root.Element("Content").Elements().Count() <= 0) return null;
+            return xTable.Root.Element("Content").Elements();
+        }
+
         public string[] getColumnesName(XDocument xTable)
         {
             IEnumerable<XElement> columnesElement = xTable.Root.Element("Entity").Elements();
@@ -66,6 +72,20 @@ namespace SimpleDB.core.TableManagement
                 Index++;
             }
             return ColumnNames;
+        }
+
+        public XElement addLine(XDocument xTable)
+        {
+            int val = Convert.ToInt32(xTable.Root.Element("Head").Value);
+            val ++;
+
+            XElement element = new XElement("Field", new XAttribute("_id", val));
+
+            xTable.Root.Element("Head").Value = val.ToString();
+            xTable.Root.Element("Content").Add(element);
+
+            return element;
+
         }
 
     }
