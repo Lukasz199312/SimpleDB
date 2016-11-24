@@ -88,6 +88,24 @@ namespace SimpleDB.core.TableManagement
 
         }
 
+        public Line addLine(object[] data)
+        {
+            if (data.Count() != Columns.Count()) return null;
+
+            XElement xLine = new TableDetails().addLine(xDocument);
+            Line newLine = new Line(Columns.ToArray(), xLine);
+            Lines.Add(newLine);
+
+            int i = 0;
+            foreach(object value in data)
+            {
+                newLine.Rows[i].set(value);
+                i++;
+            }
+
+            return newLine;
+        }
+
         public Row getRow(object RowValue, string columnName)
         {
             try
@@ -100,6 +118,7 @@ namespace SimpleDB.core.TableManagement
             }
 
         }
+
 
         private void InitializeColumns()
         {
@@ -129,5 +148,6 @@ namespace SimpleDB.core.TableManagement
                 Lines.Add( new Line(Columns.ToArray(), line.Elements().ToArray(), line) );
             }
         }
+
     }
 }
