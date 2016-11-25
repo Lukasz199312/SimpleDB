@@ -42,5 +42,10 @@ namespace SimpleDB.core
             return Rows.First(row => row.parentColumn.columnName == columnName.ToString());
         }
 
+        public Row[] getRows()
+        {
+            return Rows.ToArray();
+        }
+
     }
 }

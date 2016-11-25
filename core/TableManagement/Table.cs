@@ -49,19 +49,27 @@ namespace SimpleDB.core.TableManagement
 
         public Column getColumn(string tableName)
         {
-            //return xDocToColumn.tryParse(new TableDetails().getXmlColumn(tableName, xDocument));
-            return Columns.First(Col => Col.columnName == tableName);
+            try
+            {
+                return Columns.First(Col => Col.columnName == tableName);
+            } catch { return null;  }
+           
         }
 
         public bool RemoveColumn(string columnName)
         {
-            Column column = Columns.First(col => col.columnName == columnName);
-            if (column == null) return false;
+            try
+            {
+                Column column = Columns.First(col => col.columnName == columnName);
+                if (column == null) return false;
 
-            column.Remove();
-            Columns.Remove(column);
+                column.Remove();
+                Columns.Remove(column);
+                return true;
+            }
+            catch { return false; }
 
-            return true;
+
 
         }
 
@@ -110,7 +118,7 @@ namespace SimpleDB.core.TableManagement
         {
             try
             {
-                Line lin = Lines.First(line => line.getRow(columnName.ToString()).get() == RowValue.ToString());
+                Line lin = getLine(RowValue, columnName);
                 return lin.Rows.First(row => row.parentColumn.columnName == columnName);
             } catch
             {
@@ -119,6 +127,19 @@ namespace SimpleDB.core.TableManagement
 
         }
 
+        public Line getLine(object RowValue, string columnName)
+        {
+            try
+            {
+                return Lines.First(line => line.getRow(columnName.ToString()).get() == RowValue.ToString());
+            }
+            catch { return null; }
+        }
+
+        public Line[] getLines()
+        {
+            return Lines.ToArray();
+        }
 
         private void InitializeColumns()
         {
