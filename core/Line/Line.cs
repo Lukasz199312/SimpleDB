@@ -47,5 +47,9 @@ namespace SimpleDB.core
             return Rows.ToArray();
         }
 
+        public void addEmpty(Column parentcolumn)
+        {
+            Rows.Add(new Row(xLine, parentcolumn));
+        }
     }
 }

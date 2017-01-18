@@ -12,6 +12,7 @@ namespace SimpleDB.core.TableManagement
     public class Table
     {
         public string tableName;
+        public List<string> ReferenceColumn = new List<string>();
 
         private Entity entity;
         private string path;
@@ -30,6 +31,7 @@ namespace SimpleDB.core.TableManagement
             entity = new Entity(_xDocument.Root.Element("Entity"));
             InitializeColumns();
             InitializeLines();
+            InitializeColumnLine();
         }
 
         private void addEntity(string columnName, DataType dataType, DataOptions[] dataOptions = null)
@@ -38,14 +40,52 @@ namespace SimpleDB.core.TableManagement
             //Columns.Add(new Column(columnName, dataType, dataOptions));
         }
 
-        public bool addColumn(string columnName, DataType dataType, DataOptions[] dataOptions = null)
+        public bool addColumn(string columnName, DataType dataType, params DataOptions[] dataOptions)
         {
             XElement element =  new TableDetails().AddEntity(this.xDocument, columnName, dataType, dataOptions);
+            Column col;
 
-            if (element == null) return false;
-            Columns.Add(new Column(columnName, dataType, dataOptions, element));
+            if (element == null)
+            {
+                Column column = Columns.First(c => c.columnName == columnName);
+                column.EditDataType(dataType);
+
+                if( dataOptions.Contains(DataOptions.FOREIGN_KEY) == false )
+                {
+                    if(column.dataOptions.Contains(DataOptions.FOREIGN_KEY))
+                    {
+                        column.RemoveReference();
+                        
+                    }
+                }
+
+                col = column;
+
+
+
+            }
+            else col = new Column(columnName, dataType, dataOptions, element, this);
+
+
+            Columns.Add(col);
+
+            if(Columns.Count() - 1 >= 0)
+            {
+                foreach(Line lin in Lines)
+                {
+                    lin.addEmpty(col);
+                }
+            }
+
             return true;
         }
+
+        private void EditExsistColumn(string columnName, DataType dataType, params DataOptions[] dataOptions)
+        {
+            Column selected = Columns.First(col => col.columnName == columnName);
+            selected.EditDataType(dataType);
+        }
+
 
         public Column getColumn(string tableName)
         {
@@ -56,6 +96,16 @@ namespace SimpleDB.core.TableManagement
            
         }
 
+        public IEnumerable<Column> getColumns()
+        {
+            return Columns;
+        }
+
+        public Table getReferenceTable(string columnName)
+        {
+            return null;
+        }
+
         public bool RemoveColumn(string columnName)
         {
             try
@@ -64,18 +114,22 @@ namespace SimpleDB.core.TableManagement
                 if (column == null) return false;
 
                 column.Remove();
+                column.columnLine.RemoveAllRows();
                 Columns.Remove(column);
                 return true;
             }
             catch { return false; }
-
-
 
         }
 
         public string[] getColumnNames()
         {
             return new TableDetails().getColumnesName(xDocument);
+        }
+
+        public List<string> getColumnNamesList()
+        {
+            return new TableDetails().getColumnesName(xDocument).ToList<string>();
         }
 
         public Entity getEntities()
@@ -88,15 +142,27 @@ namespace SimpleDB.core.TableManagement
             new TableIO().Save(tableName, path, xDocument);
         }
 
+        public void Rename(string newTableName)
+        {
+            System.IO.File.Move(new TableIO().MakePath(tableName, path), new TableIO().MakePath(newTableName, path));
+            TableList.getTableList().Rename(tableName, newTableName);
+            tableName = newTableName;
 
-        public void addLine()
+            xDocument.Root.Attribute("Name").Value = newTableName;
+            
+        }
+
+        public Line addLine()
         {
             XElement xLine = new TableDetails().addLine(xDocument);
-            Lines.Add(new Line(Columns.ToArray(), xLine));
+            var line = new Line(Columns.ToArray(), xLine);
+            Lines.Add(line);
+
+            return line;
 
         }
 
-        public Line addLine(object[] data)
+        public Line addLine(params object[] data)
         {
             if (data.Count() != Columns.Count()) return null;
 
@@ -127,6 +193,11 @@ namespace SimpleDB.core.TableManagement
 
         }
 
+        public Line getReferenceLine(object RowValue, string columnName)
+        {
+            return getLine(RowValue, columnName).getRow(columnName).getReferenceLine();
+        }
+
         public Line getLine(object RowValue, string columnName)
         {
             try
@@ -136,7 +207,16 @@ namespace SimpleDB.core.TableManagement
             catch { return null; }
         }
 
-        public Line[] getLines()
+        public IEnumerable<Line> getLines(object RowValue, string columnName)
+        {
+            try
+            {
+                return Lines.Where(line => line.getRow(columnName.ToString()).get() == RowValue.ToString());
+            }
+            catch { return null; }
+        }
+
+        public Line[] getAllLines()
         {
             return Lines.ToArray();
         }
@@ -153,7 +233,7 @@ namespace SimpleDB.core.TableManagement
 
             foreach(XElement el in xCol)
             {
-                Columns.Add(xDocToColumn.tryParse(el));
+                Columns.Add(xDocToColumn.tryParse(el,this));
             }
         }
 
@@ -168,6 +248,27 @@ namespace SimpleDB.core.TableManagement
             {
                 Lines.Add( new Line(Columns.ToArray(), line.Elements().ToArray(), line) );
             }
+        }
+
+        private void InitializeColumnLine()
+        {
+            int i = 0;
+            foreach(Column col in Columns)
+            {
+                foreach(Line line in Lines)
+                {
+                    col.columnLine.Rows.Add( line.getRows()[i] );
+                }
+                i++;
+            }
+
+        }
+
+
+        public bool hasReference()
+        {
+            if (ReferenceColumn.Count <= 0) return false;
+            else return true;
         }
 
     }

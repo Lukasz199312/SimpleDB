@@ -11,13 +11,10 @@ namespace SimpleDB.core.TableManagement
     public class TableCreator
     {
         private XDocument xTableList;
-        private TableListDetails tableListDetails;
         private string path;
 
-        public TableCreator(TableListDetails tablelistDetails, string path)
+        public TableCreator(string path)
         {
-            this.tableListDetails = tablelistDetails;
-            this.xTableList = this.tableListDetails.getTableList();
 
             this.path = path;
         }
@@ -36,10 +33,11 @@ namespace SimpleDB.core.TableManagement
             else //Create new table and load it
             {
                 if (tableIO.CreateTable(tableName, path)) XNewDoc = tableIO.LoadXMLTable(tableName, path);
-                tableListDetails.addTable(tableName);
 
                 addTableName(XNewDoc, tableName);
-                addTableID(XNewDoc, tableListDetails.getCurrentId());
+                addTableID(XNewDoc, TableList.getTableList().getHeadID());
+
+                TableList.getTableList().addTableNameToList(tableName);
                 tableIO.Save(tableName, path, XNewDoc);
             }
 

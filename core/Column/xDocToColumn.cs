@@ -10,7 +10,7 @@ namespace SimpleDB.core
 {
     public static class xDocToColumn
     {
-        public static Column tryParse(XElement EntityElement)
+        public static Column tryParse(XElement EntityElement, Table table)
         {
             string columnName = EntityElement.Attribute("Name").Value;
             DataType dataType;
@@ -29,8 +29,12 @@ namespace SimpleDB.core
                 }
             }
 
+            Column col = new Column(columnName, dataType, dataOptions.ToArray(), EntityElement, table);
+
+            if (EntityElement.Attribute("Optional") != null) col.setOptional(EntityElement.Attribute("Optional").Value);
+
             //Column column = new Column();
-            return new Column(columnName, dataType, dataOptions.ToArray(), EntityElement); 
+            return col;
         }
     }
 }

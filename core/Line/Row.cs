@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using SimpleDB.core.TableManagement;
 
 namespace SimpleDB.core
 {
@@ -35,6 +36,19 @@ namespace SimpleDB.core
             return xRow.Value;
         }
 
+        public Line getReferenceLine()
+        {
+            foreach(DataOptions opt in parentColumn.dataOptions)
+            {
+                if (opt == DataOptions.FOREIGN_KEY)
+                {
+                   return TableList.getTableList().getTable(parentColumn.getReference().getTableName()).getLine(get(), parentColumn.columnName);
+                }
+            }
+
+            return null;
+        }
+
         public void set(object data)
         {
             xData.Value = data.ToString();
@@ -44,5 +58,16 @@ namespace SimpleDB.core
         {
             xData.Value = "";
         }
+
+        internal XElement getRow()
+        {
+            return xRow;
+        }
+
+        internal void remove()
+        {
+            xRow.Remove();
+        }
+
     }
 }

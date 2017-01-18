@@ -21,6 +21,7 @@ namespace SimpleDB.core.TableManagement
     {
         REQUIRE,
         PRIMARY_KEY,
-        AUTO_INCREMENT
+        AUTO_INCREMENT,
+        FOREIGN_KEY
     };
 }

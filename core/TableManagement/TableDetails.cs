@@ -30,6 +30,7 @@ namespace SimpleDB.core.TableManagement
                 }
             }
 
+
             xTable.Root.Element("Entity").Add(data);
             return data;
         }

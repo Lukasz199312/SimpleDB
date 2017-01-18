@@ -16,7 +16,7 @@ namespace SimpleDB.core.IO
 
             if (File.Exists(path)) return false;
 
-            File.Copy("xmls/table.xml", path);
+            File.Copy(@"xmls/table.xml", path);
             return true;
         }
 
@@ -47,5 +47,11 @@ namespace SimpleDB.core.IO
             path = MakePath(xDocumentName, path);
             xDocument.Save(path);
         }
+
+        public void Delete(string name, string path)
+        {
+            File.Delete(MakePath(name, path));
+        }
+
     }
 }
